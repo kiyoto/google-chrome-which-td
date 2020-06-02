@@ -26,9 +26,9 @@ chrome.extension.sendMessage({}, function(response) {
                 });
             };
             
-            let render = accountId => {
+            let render = (accountId, accountName) => {
                 let el = document.createElement('div');
-                el.innerText = 'Account: '+accountId;
+                el.innerText = 'Account: '+accountId+ ' Name: ' + accountName;
                 el.style.display = 'flex';
                 el.style.alignItems = 'center';
                 el.style.padding = '3px';
@@ -41,12 +41,18 @@ chrome.extension.sendMessage({}, function(response) {
                 document.body.appendChild(el);
             };
             
-            request({"url":"/v4/account"}).then(data => {
+            request({"url":"/v4/users/current"}).then(data => {
                 let response = JSON.parse(data);
-                console.table(response);
-                let accountId = response.id;
-                render(accountId);
+                let email = response.email;
+                let regex = /(?<=\+)[A-z]*(?=@)/gm;
+                let accountName = email.match(regex)[0];
+                request({"url":"/v4/account"}).then(data => {
+                    let response = JSON.parse(data);
+                    let accountId = response.id;
+                    render(accountId, accountName);
+                })
             });
+        
         }
     }, 10);
     
