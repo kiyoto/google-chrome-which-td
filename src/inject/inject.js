@@ -44,7 +44,7 @@ chrome.extension.sendMessage({}, function(response) {
             request({"url":"/v4/users/current"}).then(data => {
                 let response = JSON.parse(data);
                 let email = response.email;
-                let regex = /(?<=\+)[A-z]*(?=@)/gm;
+                let regex = /(?<=\+)[A-z0-9_.-]*(?=@)/gm;
                 let accountName = email.match(regex)[0];
                 request({"url":"/v4/account"}).then(data => {
                     let response = JSON.parse(data);
